@@ -15,7 +15,20 @@ func main() {
 		log.Fatalf("error iniitializing config: %s", err.Error())
 	}
 
-	repos := repository.NewRepository()
+	db, err := repository.NewPostgresDB(repository.Config{
+		Host:     "localhost",
+		Port:     "5436",
+		Username: "admin",
+		Password: "password",
+		DBName:   "postgres",
+		SSLMode:  "disable",
+	})
+
+	if err != nil {
+		log.Fatalf("failed to initialized db: %s", err.Error())
+	}
+
+	repos := repository.NewRepository(db)
 	services := service.NewService(repos)
 	handlers := handler.NewHandler(services)
 	srv := new(todo.Server)
