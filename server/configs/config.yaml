@@ -1,1 +1,9 @@
 port: "8080"
+
+db:
+  username: "admin"
+  password: "password"
+  host: "localhost"
+  dbname: "selectel"
+  port: "5433"
+  sslmode: "disable"
