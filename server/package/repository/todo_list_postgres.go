@@ -26,7 +26,10 @@ func (r *TodoListPostgres) Create(userId int, list todo.TodoList) (int, error) {
 	createListQuery := fmt.Sprintf("INSERT INTO todo_lists(title, description) VALUES ($1, $2) RETURNING id")
 	row := tx.QueryRow(createListQuery, list.Title, list.Description)
 	if err := row.Scan(&id); err != nil {
-		tx.Rollback()
+		err := tx.Rollback()
+		if err != nil {
+			return 0, err
+		}
 		return 0, err
 	}
 	//row := r.db.QueryRow("INSERT INTO users(name, username, password_hash) VALUES ($1, $2, $3) RETURNING id", user.Name, user.Username, user.Password)
@@ -34,7 +37,10 @@ func (r *TodoListPostgres) Create(userId int, list todo.TodoList) (int, error) {
 	_, err = tx.Exec(createUsersListQuery, userId, id)
 
 	if err != nil {
-		tx.Rollback()
+		err := tx.Rollback()
+		if err != nil {
+			return 0, err
+		}
 		return 0, err
 	}
 
